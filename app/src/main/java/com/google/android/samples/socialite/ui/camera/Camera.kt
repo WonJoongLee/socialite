@@ -17,7 +17,7 @@
 package com.google.android.samples.socialite.ui.camera
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.view.Surface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.layout.FoldingFeature
@@ -162,10 +163,15 @@ fun Camera(
         }
     }
 
-    @SuppressLint("MissingPermission")
     fun onVideoRecordingStart() {
-        captureMode = CaptureMode.VIDEO_RECORDING
-        viewModel.startVideoCapture(onMediaCaptured)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO,
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            captureMode = CaptureMode.VIDEO_RECORDING
+            viewModel.startVideoCapture(onMediaCaptured)
+        }
     }
 
     fun onVideoRecordingFinish() {
